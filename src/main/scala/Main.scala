@@ -10,8 +10,8 @@ object Main {
     println(upperChar())
     println(lowerChar())
     println(digit())
-    println(symbol("!#$^%+@*&"))
-    println(word(7)+word(5)+digit()+digit()+digit())
+    println(symbol("!#$^%+@*&_-"))
+    println(word(5)+word(8)+digit()+digit()+digit())
   }
 
   def printableChar():        Char = Random.nextPrintableChar()
