@@ -1,3 +1,4 @@
+import scala.annotation.tailrec
 import scala.util.Random
 import scala.io.Source
 
@@ -13,23 +14,42 @@ object Main {
 //    println(digit())
 //    println(symbol("!#$^%+@*&_-"))
 //    println(word(5)+word(8)+digit()+digit()+digit())
-    print(dec(0.25,0.25,0.25,0.25)._2)
+    //println(fourPassParamTest(0.25,0.25,0.25,0.25)._2)
 
-  }
+    val probability = List(0.5, 0.3, 0.1, 0.1)
 
-  def dec(f1:Double, f2:Double, f3:Double, f4:Double): ((Double,Double,Double,Double),Int) = {
-      val f = Random.nextDouble();
-
-      def bucket(f : Double): Int = f match {
-        case f if f <= f1                       => 1
-        case f if f > f1 && f <= f1+f2          => 2
-        case f if f > f1+f2 && f <= f1+f2+f3    => 3
-        case _                                  => 4
+    for(x <- 1 to 100){
+      for(y <- 1 to 8)
+        print(resolveType(choosePassChar(probability)._2))
+      println()
     }
 
-    ((f1,f2,f3,f4),bucket(f))
   }
 
+  def resolveType(t:Int): Char = t match {
+    case 1 => lowerChar()
+    case 2 => (digit()+48).toChar
+    case 3 => upperChar()
+    case 4 => symbol("!#$^%+@*&_-")
+  }
+
+  def choosePassChar(buckets: List[Double]): (List[Double], Int) = {
+
+    val rand = Random.nextDouble();
+    var lt: List[Double] = Nil
+    lt = buckets.zipWithIndex.flatMap(x => lt :+ buckets.take(x._2).sum)
+
+    def place(f : Double, c : Int): Int = f match {
+    case f if f <= lt(c)    => c
+    case f if c+1 < lt.size => place(f,c+1)
+    case _                  => lt.size
+  }
+
+    if (buckets.size > 1)
+      (buckets,place(rand,1))
+    else
+      (buckets,1)
+  }
 
   def printableChar():        Char = Random.nextPrintableChar()
   def upperChar():            Char = (Random.nextInt(26) + 65).asInstanceOf[Char]
